@@ -1,0 +1,25 @@
+{
+  "name": "lavibi/popoya",
+  "description": "Validator",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Lê Nhật Anh",
+      "email": "lenhatanh86@gmail.com"
+    }
+  ],
+  "config": {
+    "platform": {
+      "php": "7.3"
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^8.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Lavibi\\Popoya\\": "src/"
+    }
+  }
+}
