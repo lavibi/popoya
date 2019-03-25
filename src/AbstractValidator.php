@@ -178,6 +178,5 @@ abstract class AbstractValidator implements ValidatorInterface
      */
     protected function init()
     {
-
     }
 }
