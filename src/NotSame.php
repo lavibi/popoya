@@ -2,12 +2,12 @@
 
 namespace Lavibi\Popoya;
 
-class Same extends AbstractCompareValidator
+class NotSame extends AbstractCompareValidator
 {
-    const E_NOT_SAME = 'not_same';
+    const E_SAME = 'same';
 
     protected $messages = [
-        self::E_NOT_SAME => 'The given value is not same with compared value.'
+        self::E_SAME => 'The given value is same with compared value.'
     ];
 
     /**
@@ -17,7 +17,7 @@ class Same extends AbstractCompareValidator
      *
      * @return $this
      */
-    public function sameAs($value)
+    public function notSameAs($value)
     {
         $this->options['compared_value'] = $value;
 
@@ -29,10 +29,10 @@ class Same extends AbstractCompareValidator
      */
     protected function compare()
     {
-        $result = $this->value === $this->options['compared_value'];
+        $result = $this->value !== $this->options['compared_value'];
 
         if (!$result) {
-            $this->setError(self::E_NOT_SAME);
+            $this->setError(self::E_SAME);
         }
 
         return $result;
