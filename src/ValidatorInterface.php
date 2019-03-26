@@ -26,4 +26,10 @@ interface ValidatorInterface
      * @return string
      */
     public function getMessageCode();
+
+    /**
+     * Get valid and filter value after validation
+     * @return mixed
+     */
+    public function getStandardValue();
 }
