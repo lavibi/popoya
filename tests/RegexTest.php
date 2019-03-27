@@ -38,12 +38,20 @@ final class RegexTest extends TestCase
         $this->assertFalse($regexValidator->match('/^[0-9]$/')->isValid('a'));
     }
 
-    public function testNotSameMessage()
+    public function testNotStringMessage()
     {
-        $sameValidator = new Regex();
-        $this->assertFalse($sameValidator->sameAs('5')->isValid(5));
-        $this->assertSame('not_same', $sameValidator->getMessageCode());
-        $this->assertSame('The given value is not same with compared value.', $sameValidator->getMessage());
+        $regexValidator = new Regex();
+        $this->assertFalse($regexValidator->match('/5/')->isValid(5));
+        $this->assertSame('not_string', $regexValidator->getMessageCode());
+        $this->assertSame('The given value must be string.', $regexValidator->getMessage());
+    }
+
+    public function testNotMatchMessage()
+    {
+        $regexValidator = new Regex();
+        $this->assertFalse($regexValidator->match('/^[a-z]$/')->isValid('5'));
+        $this->assertSame('not_match', $regexValidator->getMessageCode());
+        $this->assertSame('The given value is not match regex.', $regexValidator->getMessage());
     }
 
     public function testMatch()

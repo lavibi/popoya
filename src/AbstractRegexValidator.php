@@ -22,12 +22,15 @@ abstract class AbstractRegexValidator extends AbstractValidator
 
     /**
      * @param $value
-     *
      * @return bool
+     *
+     * @throws Exception\MissingOptionException
      */
     public function isValid($value)
     {
         $this->value = $this->standardValue = $value;
+
+        $this->checkMissingOptions();
 
         if (!is_string($value)) {
             $this->setError(self::NOT_STRING);
@@ -38,5 +41,7 @@ abstract class AbstractRegexValidator extends AbstractValidator
             $this->setError($this->notMatchCode);
             return false;
         }
+
+        return true;
     }
 }
