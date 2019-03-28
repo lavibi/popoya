@@ -198,11 +198,13 @@ class UploadFileTest extends TestCase
 
 namespace Lavibi\Popoya;
 
-function is_uploaded_file($file)
-{
-    if (file_exists($file)) {
-        return true;
-    }
+if (!function_exists('Lavibi\Popoya\is_uploaded_file')) {
+    function is_uploaded_file($file)
+    {
+        if (file_exists($file)) {
+            return true;
+        }
 
-    return false;
+        return false;
+    }
 }
