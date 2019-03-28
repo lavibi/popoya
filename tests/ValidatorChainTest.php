@@ -1,5 +1,7 @@
 <?php
 
+namespace Lavibi\PopoyaTest;
+
 use PHPUnit\Framework\TestCase;
 use Lavibi\Popoya\ValidatorChain;
 use Lavibi\Popoya\NotSame;

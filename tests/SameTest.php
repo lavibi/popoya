@@ -1,5 +1,7 @@
 <?php
 
+namespace Lavibi\PopoyaTest;
+
 use PHPUnit\Framework\TestCase;
 use Lavibi\Popoya\Same;
 use Lavibi\Popoya\Exception\MissingOptionException;
@@ -19,7 +21,6 @@ final class SameTest extends TestCase
             'compared_value' => '7'
         ]);
         $this->assertSame('7', $sameValidator->getOptions()['compared_value']);
-
     }
 
     public function testMissingRequireOption()

@@ -1,5 +1,7 @@
 <?php
 
+namespace Lavibi\PopoyaTest;
+
 use PHPUnit\Framework\TestCase;
 use Lavibi\Popoya\Regex;
 use Lavibi\Popoya\Exception\MissingOptionException;
@@ -19,7 +21,6 @@ final class RegexTest extends TestCase
             'regex' => '/^[0-9]$/'
         ]);
         $this->assertSame('/^[0-9]$/', $regexValidator->getOptions()['regex']);
-
     }
 
     public function testMissingRequireOption()
