@@ -14,8 +14,10 @@ abstract class AbstractCompareValidator extends AbstractValidator
     ];
 
     /**
-     * @param Given $value
+     * @param mixed $value
+     *
      * @return bool
+     *
      * @throws Exception\MissingOptionException
      */
     public function isValid($value)

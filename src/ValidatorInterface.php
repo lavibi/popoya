@@ -7,7 +7,7 @@ interface ValidatorInterface
     /**
      * Validate
      *
-     * @param $value Given value to validate
+     * @param mixed $value Given value to validate
      *
      * @return boolean
      */

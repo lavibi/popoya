@@ -79,7 +79,7 @@ class UploadFile extends AbstractValidator
     /**
      * Validate.
      *
-     * @param [] $value
+     * @params array $value
      *
      * @return boolean
      */
