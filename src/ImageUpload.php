@@ -2,7 +2,7 @@
 
 namespace Lavibi\Popoya;
 
-class ImageUpload extends UploadFile
+class ImageUpload extends Upload
 {
     const MAX_WIDTH = 'max_width';
     const MAX_HEIGHT = 'max_height';

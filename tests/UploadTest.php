@@ -3,15 +3,15 @@
 namespace Lavibi\PopoyaTest;
 
 use PHPUnit\Framework\TestCase;
-use Lavibi\Popoya\UploadFile;
+use Lavibi\Popoya\Upload;
 
-class UploadFileTest extends TestCase
+class UploadTest extends TestCase
 {
     public function testPhpFailedUpload()
     {
         $data = $this->getPhpFailedUploadData();
 
-        $uploadFileValidator = new UploadFile();
+        $uploadFileValidator = new Upload();
 
         $uploadFileValidator->reset();
         $this->assertFalse($uploadFileValidator->isValid($data[\UPLOAD_ERR_INI_SIZE]));
@@ -59,7 +59,7 @@ class UploadFileTest extends TestCase
             'error' => \UPLOAD_ERR_OK
         ];
 
-        $uploadFileValidator = new UploadFile();
+        $uploadFileValidator = new Upload();
 
         $uploadFileValidator->reset();
         $this->assertFalse($uploadFileValidator->isValid($uploadFileData));
@@ -77,7 +77,7 @@ class UploadFileTest extends TestCase
             'error' => \UPLOAD_ERR_OK
         ];
 
-        $uploadFileValidator = new UploadFile();
+        $uploadFileValidator = new Upload();
         $this->assertTrue($uploadFileValidator->isValid($uploadFileData));
 
         $uploadFileValidator->reset();
@@ -101,7 +101,7 @@ class UploadFileTest extends TestCase
             'error' => \UPLOAD_ERR_OK
         ];
 
-        $uploadFileValidator = new UploadFile();
+        $uploadFileValidator = new Upload();
         $this->assertTrue($uploadFileValidator->isValid($uploadFileData));
 
         $uploadFileValidator->reset();
@@ -125,7 +125,7 @@ class UploadFileTest extends TestCase
             'error' => \UPLOAD_ERR_OK
         ];
 
-        $uploadFileValidator = new UploadFile();
+        $uploadFileValidator = new Upload();
         $this->assertTrue($uploadFileValidator->isValid($uploadFileData));
 
         $validData = $uploadFileValidator->getStandardValue();
@@ -143,54 +143,54 @@ class UploadFileTest extends TestCase
     protected function getPhpFailedUploadData()
     {
         return [
-            \UPLOAD_ERR_INI_SIZE => [
+            UPLOAD_ERR_INI_SIZE => [
                 'name' => 'abc.fig',
                 'type' => 'type/type',
                 'size' => 10,
                 'tmp_name' => '/temp/uploaded_file',
-                'error' => \UPLOAD_ERR_INI_SIZE
+                'error' => UPLOAD_ERR_INI_SIZE
             ],
-            \UPLOAD_ERR_FORM_SIZE => [
+            UPLOAD_ERR_FORM_SIZE => [
                 'name' => 'abc.fig',
                 'type' => 'type/type',
                 'size' => 10,
                 'tmp_name' => '/temp/uploaded_file',
-                'error' => \UPLOAD_ERR_FORM_SIZE
+                'error' => UPLOAD_ERR_FORM_SIZE
             ],
-            \UPLOAD_ERR_PARTIAL => [
+            UPLOAD_ERR_PARTIAL => [
                 'name' => 'abc.fig',
                 'type' => 'type/type',
                 'size' => 10,
                 'tmp_name' => '/temp/uploaded_file',
-                'error' => \UPLOAD_ERR_PARTIAL
+                'error' => UPLOAD_ERR_PARTIAL
             ],
-            \UPLOAD_ERR_NO_FILE => [
+            UPLOAD_ERR_NO_FILE => [
                 'name' => 'abc.fig',
                 'type' => 'type/type',
                 'size' => 10,
                 'tmp_name' => '/temp/uploaded_file',
-                'error' => \UPLOAD_ERR_NO_FILE
+                'error' => UPLOAD_ERR_NO_FILE
             ],
-            \UPLOAD_ERR_NO_TMP_DIR => [
+            UPLOAD_ERR_NO_TMP_DIR => [
                 'name' => 'abc.fig',
                 'type' => 'type/type',
                 'size' => 10,
                 'tmp_name' => '/temp/uploaded_file',
-                'error' => \UPLOAD_ERR_NO_TMP_DIR
+                'error' => UPLOAD_ERR_NO_TMP_DIR
             ],
-            \UPLOAD_ERR_CANT_WRITE => [
+            UPLOAD_ERR_CANT_WRITE => [
                 'name' => 'abc.fig',
                 'type' => 'type/type',
                 'size' => 10,
                 'tmp_name' => '/temp/uploaded_file',
-                'error' => \UPLOAD_ERR_CANT_WRITE
+                'error' => UPLOAD_ERR_CANT_WRITE
             ],
-            \UPLOAD_ERR_EXTENSION => [
+            UPLOAD_ERR_EXTENSION => [
                 'name' => 'abc.fig',
                 'type' => 'type/type',
                 'size' => 10,
                 'tmp_name' => '/temp/uploaded_file',
-                'error' => \UPLOAD_ERR_EXTENSION
+                'error' => UPLOAD_ERR_EXTENSION
             ]
         ];
     }

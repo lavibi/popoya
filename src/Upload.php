@@ -2,7 +2,7 @@
 
 namespace Lavibi\Popoya;
 
-class UploadFile extends AbstractValidator
+class Upload extends AbstractValidator
 {
     const NO_LIMIT_SIZE = 0;
     const ALL_TYPE = [];
@@ -123,13 +123,13 @@ class UploadFile extends AbstractValidator
     protected function isValidUploadFile($path, $error)
     {
         $case = [
-            \UPLOAD_ERR_INI_SIZE => self::PHP_INI_SIZE,
-            \UPLOAD_ERR_FORM_SIZE => self::PHP_FORM_SIZE,
-            \UPLOAD_ERR_PARTIAL => self::PHP_PARTIAL,
-            \UPLOAD_ERR_NO_FILE => self::PHP_NO_FILE,
-            \UPLOAD_ERR_NO_TMP_DIR => self::PHP_NO_TMP_DIR,
-            \UPLOAD_ERR_CANT_WRITE => self::PHP_CANT_WRITE,
-            \UPLOAD_ERR_EXTENSION => self::PHP_EXTENSION
+            UPLOAD_ERR_INI_SIZE => self::PHP_INI_SIZE,
+            UPLOAD_ERR_FORM_SIZE => self::PHP_FORM_SIZE,
+            UPLOAD_ERR_PARTIAL => self::PHP_PARTIAL,
+            UPLOAD_ERR_NO_FILE => self::PHP_NO_FILE,
+            UPLOAD_ERR_NO_TMP_DIR => self::PHP_NO_TMP_DIR,
+            UPLOAD_ERR_CANT_WRITE => self::PHP_CANT_WRITE,
+            UPLOAD_ERR_EXTENSION => self::PHP_EXTENSION
         ];
 
         if (isset($case[$error])) {
