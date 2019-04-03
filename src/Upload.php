@@ -2,11 +2,10 @@
 
 namespace Lavibi\Popoya;
 
+use Psr\Http\Message\UploadedFileInterface;
+
 class Upload extends AbstractValidator
 {
-    const NO_LIMIT_SIZE = 0;
-    const ALL_TYPE = [];
-
     /**
      * Error code : PHP upload error code.
      */
@@ -17,6 +16,7 @@ class Upload extends AbstractValidator
     const PHP_NO_TMP_DIR = 'no_tmp_dir';
     const PHP_CANT_WRITE = 'cant_write';
     const PHP_EXTENSION = 'err_extension';
+    const UNKNOWN_PHP_ERROR = 'unknown_php_error';
 
     /**
      * Error code : Unknown error
@@ -28,7 +28,13 @@ class Upload extends AbstractValidator
      */
     const NOT_VALID_TYPE = 'not_valid_type';
 
-    const LARGE_SIZE = 'large_size';
+
+    const NOT_UPLOAD_DATA = 'not_upload_data';
+
+    /**
+     * @var array|UploadedFileInterface|mixed
+     */
+    protected $value;
 
     /**
      * Error messages
@@ -43,24 +49,11 @@ class Upload extends AbstractValidator
         self::PHP_NO_TMP_DIR => 'Missing a temporary folder.',
         self::PHP_CANT_WRITE => 'Failed to write uploaded file to disk.',
         self::PHP_EXTENSION => 'Uploaded file was stopped by extension.',
+        self::UNKNOWN_PHP_ERROR => 'Unknown PHP error.',
         self::NO_UPLOADED_FILE => 'No uploaded file.',
-        self::NOT_VALID_TYPE => 'Uploaded file has not valid type.',
-        self::LARGE_SIZE => 'Uploaded file was too large.'
+//        self::NOT_VALID_TYPE => 'Uploaded file has not valid type.',
+        self::NOT_UPLOAD_DATA => 'Value is not valid upload data.'
     ];
-
-    /**
-     * Size limit upload file, in byte.
-     *
-     * @param int $size
-     *
-     * @return $this
-     */
-    public function hasMaxSize($size)
-    {
-        $this->options['maxsize'] = (int) $size;
-
-        return $this;
-    }
 
     /**
      * Set allow file type (image/gif, image/png ...)
@@ -69,17 +62,17 @@ class Upload extends AbstractValidator
      *
      * @return $this
      */
-    public function allowType($type)
-    {
-        $this->options['type'][] = (string) $type;
-
-        return $this;
-    }
+//    public function allowType($type)
+//    {
+//        $this->options['type'][] = (string) $type;
+//
+//        return $this;
+//    }
 
     /**
      * Validate.
      *
-     * @param array $value
+     * @param mixed $value
      *
      * @return boolean
      */
@@ -87,40 +80,56 @@ class Upload extends AbstractValidator
     {
         $this->value = $value;
 
-        if (!$this->isValidUploadFile($value['tmp_name'], $value['error'])) {
-            return false;
+        if ($value instanceof UploadedFileInterface) {
+            return $this->isValidPSR7Upload();
         }
 
-        if (!$this->isValidSize($value['size'])) {
-            return false;
+        if (is_array($value) && isset($value['tmp_name']) && isset($value['error'])) {
+            return $this->isValidUploadFile();
         }
 
-        $value['type'] = $this->getFileType($value['tmp_name']);
-
-        if (!$this->isValidFileType($value['type'])) {
-            return false;
-        }
-
-        $this->standardValue = [
-            'name' => $value['name'],
-            'type' => $value['type'],
-            'path' => $value['tmp_name'],
-            'ext' => $this->getFileExt($value['name']),
-            'size' => $value['size']
-        ];
-
-        return true;
+        $this->setError(static::NOT_UPLOAD_DATA);
+        return false;
     }
 
     /**
      * Validate uploaded file.
      *
-     * @param string $path
-     * @param int $error
-     *
      * @return boolean
      */
-    protected function isValidUploadFile($path, $error)
+    protected function isValidUploadFile()
+    {
+        $error = $this->value['error'];
+        $path = $this->value['tmp_name'];
+
+        if ($code = $this->isErrorUpload($error)) {
+            $this->setError($code);
+            return false;
+        }
+
+        if (!is_uploaded_file($path)) {
+            $this->setError(static::NO_UPLOADED_FILE);
+            return false;
+        }
+
+        $this->standardValue = $this->value;
+        return true;
+    }
+
+    protected function isValidPSR7Upload()
+    {
+        $error = $this->value->getError();
+
+        if ($code = $this->isErrorUpload($error)) {
+            $this->setError($code);
+            return false;
+        }
+
+        $this->standardValue = $this->value;
+        return true;
+    }
+
+    protected function isErrorUpload($error)
     {
         $case = [
             UPLOAD_ERR_INI_SIZE => self::PHP_INI_SIZE,
@@ -133,102 +142,29 @@ class Upload extends AbstractValidator
         ];
 
         if (isset($case[$error])) {
-            $this->setError($case[$error]);
-            return false;
+            return $case[$error];
         }
 
-        if (!is_uploaded_file($path)) {
-            $this->setError(self::NO_UPLOADED_FILE);
-            return false;
+        if ($error !== 0) {
+            return static::UNKNOWN_PHP_ERROR;
         }
 
-        return true;
+        return false;
     }
 
-    /**
-     * Validate size of uploaded file.
-     *
-     * @param int $size
-     *
-     * @return boolean
-     */
-    protected function isValidSize($size)
-    {
-        if ($this->options['maxsize'] === 0) {
-            return true;
-        }
-
-        if ($size > $this->options['maxsize']) {
-            $this->setError(self::LARGE_SIZE);
-            return false;
-        }
-
-        return true;
-    }
-
-    protected function isValidFileType($type)
-    {
-        // Allow all mines
-        if ($this->options['type'] === []) {
-            return true;
-        }
-
-        // Not valid mine
-        if (!in_array($type, $this->options['type'])) {
-            $this->setError(self::NOT_VALID_TYPE);
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Init.
-     *
-     * Set default options.
-     */
-    protected function init()
-    {
-        $this->defaultOptions = [
-            'maxsize' => self::NO_LIMIT_SIZE,
-            'type' => self::ALL_TYPE
-        ];
-    }
-
-    /**
-     * Get file type
-     *
-     * TODO: move to new project
-     *
-     * @param string $file File path
-     * @return string
-     */
-    protected function getFileType($file)
-    {
-        $finfo = new \finfo();
-        $type = $finfo->file($file, FILEINFO_MIME_TYPE);
-
-        return $type;
-    }
-
-    /**
-     * Get file extension
-     *
-     * TODO: move to new project
-     *
-     * @param string $file File name
-     * @return string
-     *
-     *
-     */
-    protected function getFileExt($file)
-    {
-        $part = explode('.', $file);
-
-        if (count($part) === 1) {
-            return '';
-        }
-
-        return strtolower(end($part));
-    }
+//    protected function isValidFileType($type)
+//    {
+//        // Allow all mines
+//        if ($this->options['type'] === []) {
+//            return true;
+//        }
+//
+//        // Not valid mine
+//        if (!in_array($type, $this->options['type'])) {
+//            $this->setError(self::NOT_VALID_TYPE);
+//            return false;
+//        }
+//
+//        return true;
+//    }
 }

@@ -2,10 +2,14 @@
 
 namespace Lavibi\Popoya;
 
-class ImageUpload extends Upload
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UploadedFileInterface;
+
+class Image extends AbstractValidator
 {
     const MAX_WIDTH = 'max_width';
     const MAX_HEIGHT = 'max_height';
+    const NOT_VALID_IMAGE = 'not_valid_image';
 
     public function hasMaxWidth($width)
     {
@@ -28,11 +32,9 @@ class ImageUpload extends Upload
      */
     public function isValid($value)
     {
-        if (!parent::isValid($value)) {
-            return false;
-        }
+        $this->value = $value;
 
-        $image = $this->isImageFile($value['tmp_name']);
+        $image = $this->isImage();
 
         if (!$image) {
             return false;
@@ -47,12 +49,19 @@ class ImageUpload extends Upload
         return true;
     }
 
-    protected function isImageFile($filePath)
+    protected function isImage()
     {
-        $size = getimagesize($filePath);
+        $file = $this->getFile();
+
+        if ($file === false) {
+            $this->setError(static::NOT_VALID_IMAGE);
+            return false;
+        }
+
+        $size = @getimagesize($file);
 
         if ($size === false) {
-            $this->setError(self::NOT_VALID_TYPE);
+            $this->setError(static::NOT_VALID_IMAGE);
             return false;
         }
 
@@ -60,6 +69,29 @@ class ImageUpload extends Upload
             'width' => $size[0],
             'height' => $size[1],
         ];
+    }
+
+    protected function getFile()
+    {
+        $file = $this->value;
+
+        if ($this->value instanceof UploadedFileInterface) {
+            $file = $this->value->getStream();
+        }
+
+        if (is_array($this->value) && isset($this->value['tmp_name'])) {
+            $file = $this->value['tmp_name'];
+        }
+
+        if (is_string($file)) {
+            return $file;
+        }
+
+        if ($file instanceof StreamInterface) {
+            return $file->getMetadata('uri');
+        }
+
+        return false;
     }
 
     protected function isValidImageMaxSize($width, $height)
@@ -81,23 +113,13 @@ class ImageUpload extends Upload
     {
         parent::init();
 
-        $this->defaultOptions['type'] = [
-            'image/gif',
-            'image/jpg',
-            'image/jpeg',
-            'image/jpe',
-            'image/pjpeg',
-            'image/png',
-            'img/x-png'
-        ];
-
         $this->defaultOptions['size'] = [
             'width' => 0,
             'height' => 0,
         ];
 
-        $this->messages[self::NOT_VALID_TYPE] = 'Uploaded file was not image type.';
-        $this->messages[self::MAX_WIDTH] = 'Image width is too large.';
-        $this->messages[self::MAX_HEIGHT] = 'Image height is too large.';
+        $this->messages[static::NOT_VALID_IMAGE] = 'Given data was not image type.';
+        $this->messages[static::MAX_WIDTH] = 'Image width is too large.';
+        $this->messages[static::MAX_HEIGHT] = 'Image height is too large.';
     }
 }
