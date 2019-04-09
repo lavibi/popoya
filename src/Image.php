@@ -88,7 +88,7 @@ class Image extends AbstractValidator
         }
 
         if ($file instanceof StreamInterface) {
-            return $file->getMetadata('uri');
+            return $file->getMetadata('uri') ?? false;
         }
 
         return false;
