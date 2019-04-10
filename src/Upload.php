@@ -151,20 +151,4 @@ class Upload extends AbstractValidator
 
         return false;
     }
-
-//    protected function isValidFileType($type)
-//    {
-//        // Allow all mines
-//        if ($this->options['type'] === []) {
-//            return true;
-//        }
-//
-//        // Not valid mine
-//        if (!in_array($type, $this->options['type'])) {
-//            $this->setError(self::NOT_VALID_TYPE);
-//            return false;
-//        }
-//
-//        return true;
-//    }
 }
