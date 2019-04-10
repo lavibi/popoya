@@ -2,7 +2,7 @@
 
 namespace Lavibi\Popoya;
 
-class Validator
+class Validator implements ValidatorInterface
 {
     const IS_REQUIRED = 1;
 
@@ -19,17 +19,31 @@ class Validator
     protected $dataValidatorChain;
 
     /**
+     * Error message
+     *
+     * @var string
+     */
+    protected $message;
+
+    /**
+     * Error code
+     *
+     * @var string
+     */
+    protected $messageCode;
+
+    /**
      * Index array of data list need to validate
      *
      * 1 is required
      * 0 is optional
      *
-     * @var []
+     * @var string[]
      */
     protected $data;
 
     /**
-     * @var mixed
+     * @var mixed[]
      */
     protected $values;
 
@@ -40,7 +54,7 @@ class Validator
      */
     public function isRequired($name)
     {
-        return $this->add($name, self::IS_REQUIRED);
+        return $this->add($name, static::IS_REQUIRED);
     }
 
     /**
@@ -50,22 +64,43 @@ class Validator
      */
     public function isOptional($name)
     {
-        return $this->add($name, self::IS_OPTIONAL);
+        return $this->add($name, static::IS_OPTIONAL);
     }
 
     public function isValid($values)
     {
         foreach ($this->data as $name => $isRequired) {
-            if ($isRequired && !isset($this->$values[$name])) {
+            if ($isRequired === static::IS_OPTIONAL) {
+                if (!isset($values[$name])) {
+                    continue;
+                }
+            }
+
+            if (!isset($values[$name])) {
                 return false;
             }
 
-            if (isset($this->$values[$name])) {
-                $result = $this->dataValidatorChain[$name]->isValid($this->$values[$name]);
+            if (!$this->dataValidatorChain[$name]->isValid($values[$name])) {
+                return false;
             }
         }
 
         return true;
+    }
+
+    public function getMessage()
+    {
+        // TODO: Implement getMessage() method.
+    }
+
+    public function getMessageCode()
+    {
+        // TODO: Implement getMessageCode() method.
+    }
+
+    public function getStandardValue()
+    {
+        // TODO: Implement getStandardValue() method.
     }
 
     /**
@@ -78,7 +113,7 @@ class Validator
     {
         $this->data[$name] = $isRequired;
 
-        if (!isset($dataValidatorChain[$name])) {
+        if (!isset($this->dataValidatorChain[$name])) {
             $this->dataValidatorChain[$name] = new ValidatorChain();
         }
 
