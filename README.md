@@ -47,3 +47,22 @@ $chainValidator->addValidator((new Popoya\NotSame())->setOptions(...));
 
 $chainValidator->isValid(5);
 ```
+
+## Validator
+
+Full validator for dataset like form data, API params
+
+```php
+$validator = new Popoya\Validator();
+
+$validator->isRequired('username')->maxLenght(20);
+$validator->isRequired('password')->lenght(30, 50);
+$validator->isOptional('email)->isEmail();
+$validator->isOptional('avatar')->isUpload()->isImage();
+
+// PSR7 post request
+$validator->isValid(array_merge(
+    $request->getParsedBody(),
+    $request->getUploadedFiles()
+));
+```
