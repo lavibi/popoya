@@ -11,6 +11,8 @@ use \InvalidArgumentException;
  *
  * @method ValidatorChain sameAs(mixed $value)
  * @method ValidatorChain notSameAs(mixed $value)
+ * @method ValidatorChain isUpload()
+ * @method ValidatorChain isImage()
  */
 class ValidatorChain extends AbstractValidator
 {
