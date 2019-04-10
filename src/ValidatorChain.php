@@ -2,6 +2,8 @@
 
 namespace Lavibi\Popoya;
 
+use \InvalidArgumentException;
+
 /**
  * Class ValidatorChain
  *
@@ -30,6 +32,18 @@ class ValidatorChain extends AbstractValidator
     ];
 
     /**
+     * List of special methods of no option validators
+     * Each method belongs only validator.
+     * Use as shortcut for addValidator method
+     *
+     * @var array
+     */
+    protected $noOptionValidator = [
+        'isUpload' => '\Lavibi\Popoya\Upload',
+        'isImage' => '\Lavibi\Popoya\Image'
+    ];
+
+    /**
      *
      * @param $name
      * @param $arguments
@@ -38,8 +52,14 @@ class ValidatorChain extends AbstractValidator
      */
     public function __call($name, $arguments)
     {
+        if (isset($this->noOptionValidator[$name])) {
+            $validatorClass = $this->noOptionValidator[$name];
+            $this->validators[$validatorClass] = new $validatorClass();
+            return $this;
+        }
+
         if (!isset($this->setOptionMethods[$name])) {
-            throw new \InvalidArgumentException('Set option method ' . $name . ' is not support');
+            throw new InvalidArgumentException('Set option method ' . $name . ' is not support');
         }
 
         $validatorClass = $this->setOptionMethods[$name];

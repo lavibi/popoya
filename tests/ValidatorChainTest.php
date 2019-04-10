@@ -2,14 +2,30 @@
 
 namespace Lavibi\PopoyaTest;
 
+use \InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Lavibi\Popoya\ValidatorChain;
 use Lavibi\Popoya\NotSame;
 use Lavibi\Popoya\Same;
+use Lavibi\Popoya\Upload;
+use Lavibi\Popoya\Image;
 use Lavibi\Popoya\Exception\MissingOptionException;
 
 class ValidatorChainTest extends TestCase
 {
+    public function testInvalidMethod()
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $validator = new ValidatorChain();
+        $validator->fakeMethod();
+
+        $this->expectException(InvalidArgumentException::class);
+
+        $validator = new ValidatorChain();
+        $validator->fakeMethod2('34', 4);
+    }
+
     public function testValid()
     {
         $validator = new ValidatorChain();
@@ -66,5 +82,21 @@ class ValidatorChainTest extends TestCase
         $this->assertFalse($validator->isValid(5));
         $this->assertEquals(Same::E_NOT_SAME, $validator->getMessageCode());
         $this->assertEquals('The given value is not same with compared value.', $validator->getMessage());
+    }
+
+    public function testInValidWithNoOptionValidator()
+    {
+        $validator = new ValidatorChain();
+
+        $validator->isUpload()->isImage();
+
+        $this->assertFalse($validator->isValid(6));
+        $this->assertEquals(Upload::NOT_UPLOAD_DATA, $validator->getMessageCode());
+
+        $validator = new ValidatorChain();
+        $validator->isImage()->isUpload();
+
+        $this->assertFalse($validator->isValid(6));
+        $this->assertEquals(Image::NOT_VALID_IMAGE, $validator->getMessageCode());
     }
 }
