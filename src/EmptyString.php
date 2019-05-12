@@ -2,13 +2,13 @@
 
 namespace Lavibi\Popoya;
 
-class NotEmptyString extends AbstractValidator
+class EmptyString extends AbstractValidator
 {
-    const E_EMPTY = 'empty';
+    const E_NOT_EMPTY = 'empty';
     const E_NOT_STRING = 'not_string';
 
     protected $messages = [
-        self::E_EMPTY => 'The given value is empty string.',
+        self::E_NOT_EMPTY => 'The given value is not empty string.',
         self::E_NOT_STRING => 'The given value is not string.'
     ];
 
@@ -30,8 +30,8 @@ class NotEmptyString extends AbstractValidator
             $this->value = trim($this->value);
         }
 
-        if ($this->value === '') {
-            $this->setError(static::E_EMPTY);
+        if ($this->value !== '') {
+            $this->setError(static::E_NOT_EMPTY);
             return false;
         }
 
