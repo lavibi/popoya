@@ -11,6 +11,7 @@ use \InvalidArgumentException;
  *
  * @method ValidatorChain sameAs(mixed $value)
  * @method ValidatorChain notSameAs(mixed $value)
+ * @method ValidatorChain notEmpty() Check not empty string
  * @method ValidatorChain isUpload()
  * @method ValidatorChain isImage()
  */
@@ -41,6 +42,7 @@ class ValidatorChain extends AbstractValidator
      * @var array
      */
     protected $noOptionValidator = [
+        'notEmpty' => '\Lavibi\Popoya\NotEmptyString',
         'isUpload' => '\Lavibi\Popoya\Upload',
         'isImage' => '\Lavibi\Popoya\Image'
     ];

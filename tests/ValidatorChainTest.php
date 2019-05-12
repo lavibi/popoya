@@ -99,4 +99,11 @@ class ValidatorChainTest extends TestCase
         $this->assertFalse($validator->isValid(6));
         $this->assertEquals(Image::NOT_VALID_IMAGE, $validator->getMessageCode());
     }
+
+    public function testAutoFunctionWork()
+    {
+        $validator = new ValidatorChain();
+        $this->assertFalse($validator->notEmpty()->isValid(' '));
+        $this->assertTrue($validator->notEmpty()->isValid('a'));
+    }
 }
