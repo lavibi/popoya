@@ -22,7 +22,7 @@ abstract class AbstractCompareValidator extends AbstractValidator
      */
     public function isValid($value)
     {
-        $this->value = $value;
+        $this->value = $this->standardValue = $value;
 
         $this->checkMissingOptions();
 

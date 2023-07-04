@@ -57,7 +57,7 @@ $validator = new Popoya\Validator();
 
 $validator->isRequired('username')->maxLenght(20);
 $validator->isRequired('password')->lenght(30, 50);
-$validator->isOptional('email)->isEmail();
+$validator->isOptional('email')->isEmail();
 $validator->isOptional('avatar')->isUpload()->isImage();
 
 // PSR7 post request
