@@ -13,7 +13,6 @@ class Integer extends AbstractValidator
 
     public function isValid($value): bool
     {
-        var_dump($value);
         $this->value = $this->standardValue = $value;
 
         if (is_string($value)) {
